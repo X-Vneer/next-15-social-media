@@ -1,6 +1,6 @@
 import { z } from "zod"
 
-export const singUpSchema = z.object({
+export const signUpSchema = z.object({
   email: z.string().toLowerCase().email("Invalid email address"),
   username: z
     .string({ required_error: "username is required" })
@@ -15,7 +15,7 @@ export const singUpSchema = z.object({
     .max(20, "password must be less than 20 characters"),
 })
 
-export type SingUpValues = z.infer<typeof singUpSchema>
+export type SignUpValues = z.infer<typeof signUpSchema>
 
 export const signInSchema = z.object({
   username: z
@@ -28,3 +28,5 @@ export const signInSchema = z.object({
     .min(8, "password must be at least 8 characters")
     .max(20, "password must be less than 20 characters"),
 })
+
+export type SingInValues = z.infer<typeof signInSchema>
