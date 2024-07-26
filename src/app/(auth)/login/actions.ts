@@ -1,4 +1,4 @@
-"user server"
+"use server"
 
 import { isRedirectError } from "next/dist/client/components/redirect"
 import { cookies } from "next/headers"
@@ -9,7 +9,7 @@ import { verify } from "@node-rs/argon2"
 import { lucia } from "@/lib/lucia"
 import prisma from "@/lib/prisma"
 
-export async function logIn(credentials: SignInValues): Promise<{ error: string }> {
+export async function login(credentials: SignInValues): Promise<{ error: string }> {
   try {
     const { data, error, success } = signInSchema.safeParse(credentials)
     if (!success)
