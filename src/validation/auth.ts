@@ -29,4 +29,4 @@ export const signInSchema = z.object({
     .max(20, "password must be less than 20 characters"),
 })
 
-export type SingInValues = z.infer<typeof signInSchema>
+export type SignInValues = z.infer<typeof signInSchema>
