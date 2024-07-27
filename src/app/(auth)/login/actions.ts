@@ -40,7 +40,7 @@ export async function login(credentials: SignInValues): Promise<{ error: string 
       parallelism: 1,
     })
 
-    if (validPassword) {
+    if (!validPassword) {
       return {
         error: "Incorrect username or password",
       }
@@ -52,6 +52,7 @@ export async function login(credentials: SignInValues): Promise<{ error: string 
 
     return redirect("/")
   } catch (error) {
+    console.log("🚀 ~ login ~ error:", error)
     if (isRedirectError(error)) throw error
     return {
       error: "something went wrong!, please try again",
