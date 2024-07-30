@@ -4,6 +4,7 @@ import React from "react"
 import { useQuery } from "@tanstack/react-query"
 import { Loader2 } from "lucide-react"
 
+import kyInstance from "@/lib/ky"
 import { PostData } from "@/lib/prisma/types"
 
 import Post from "./posts/post"
@@ -14,11 +15,7 @@ const ForYouFeed = (props: Props) => {
   const query = useQuery<PostData[]>({
     queryKey: ["posts-feed", "for-you"],
     queryFn: async () => {
-      const res = await fetch("/api/v1/posts/for-you")
-      if (!res.ok) {
-        throw Error(`Request failed with status code ${res.status}`)
-      }
-      return res.json()
+      return await kyInstance.get("/api/v1/posts/for-you").json<PostData[]>()
     },
   })
 
