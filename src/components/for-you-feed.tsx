@@ -7,8 +7,9 @@ import { Loader2 } from "lucide-react"
 import kyInstance from "@/lib/ky"
 import { PostsPage } from "@/lib/prisma/types"
 
-import InfiniteScrollContainer from "./infinite-scroll-container"
+import InfiniteScrollContainer from "./common/infinite-scroll-container"
 import Post from "./posts/post"
+import PostsLoadingSkeleton from "./posts/post-loading-skeleton"
 import { Button } from "./ui/button"
 
 type Props = {}
@@ -30,11 +31,7 @@ const ForYouFeed = (props: Props) => {
   })
 
   if (status === "pending") {
-    return (
-      <div>
-        <Loader2 className="mx-auto my-10 animate-spin" />
-      </div>
-    )
+    return <PostsLoadingSkeleton />
   }
 
   if (status === "error") {
@@ -45,7 +42,11 @@ const ForYouFeed = (props: Props) => {
     )
   }
 
-  const posts = data.pages.flatMap((page) => page.posts)
+  const posts = data.pages?.flatMap((page) => page.posts)
+
+  if (status === "success" && !posts.length && !hasNextPage) {
+    return <p className="text-center text-muted-foreground">No one has posted anything yet.</p>
+  }
 
   return (
     <InfiniteScrollContainer
