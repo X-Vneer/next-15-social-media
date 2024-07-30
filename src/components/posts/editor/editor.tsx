@@ -49,7 +49,10 @@ const Editor = (props: Props) => {
       const queryFilter: QueryFilters = {
         queryKey: ["posts-feed", "for-you"],
       }
+
+      // here we cancel any ongoing queries to prevent bugs with infinite scroll
       await queryClient.cancelQueries(queryFilter)
+      // here we mutate the cash directly for better performance
       queryClient.setQueriesData<InfiniteData<PostsPage, string | null>>(queryFilter, (oldData) => {
         const firstPage = oldData?.pages[0]
         if (firstPage) {
@@ -64,6 +67,15 @@ const Editor = (props: Props) => {
             ],
           }
         }
+
+        // if there was NO first page we invalidate queries to fetch the first page
+        // incase we canceled the query we need to fetch the first page
+        queryClient.invalidateQueries({
+          queryKey: queryFilter.queryKey,
+          predicate: (query) => {
+            return !query.state.data
+          },
+        })
       })
       myEditor?.commands.clearContent()
     },
