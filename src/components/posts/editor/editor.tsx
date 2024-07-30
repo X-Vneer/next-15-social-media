@@ -11,7 +11,11 @@ import { submitPost } from "./actions"
 
 import "./style.css"
 
+import { InfiniteData, QueryFilters, useMutation, useQueryClient } from "@tanstack/react-query"
+
+import { PostData, PostsPage } from "@/lib/prisma/types"
 import LoadingButton from "@/components/ui/loading-button"
+import { useToast } from "@/components/ui/use-toast"
 
 type Props = {}
 
@@ -33,19 +37,46 @@ const Editor = (props: Props) => {
       blockSeparator: "\n",
     }) || ""
 
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState("")
-  const onSubmit = async () => {
-    try {
-      setError("")
-      setIsLoading(true)
-      await submitPost(input)
+  const { toast } = useToast()
+  const queryClient = useQueryClient()
+  const { error, isPending, mutate } = useMutation({
+    mutationFn: submitPost,
+    onSuccess: async (newPost) => {
+      if ("error" in newPost) {
+        throw Error(newPost.error)
+      }
+
+      const queryFilter: QueryFilters = {
+        queryKey: ["posts-feed", "for-you"],
+      }
+      await queryClient.cancelQueries(queryFilter)
+      queryClient.setQueriesData<InfiniteData<PostsPage, string | null>>(queryFilter, (oldData) => {
+        const firstPage = oldData?.pages[0]
+        if (firstPage) {
+          return {
+            pageParams: oldData.pageParams,
+            pages: [
+              {
+                posts: [newPost, ...firstPage.posts],
+                search: firstPage.search,
+              },
+              ...oldData.pages.slice(1),
+            ],
+          }
+        }
+      })
       myEditor?.commands.clearContent()
-    } catch (error) {
-      setError("something went wrong!")
-    } finally {
-      setIsLoading(false)
-    }
+    },
+    onError: (error) => {
+      toast({
+        variant: "destructive",
+        description: "Failed to post, Please try again.",
+      })
+    },
+  })
+
+  function onSubmit() {
+    mutate(input)
   }
 
   return (
@@ -57,9 +88,11 @@ const Editor = (props: Props) => {
           className="max-h-[20rem] w-full overflow-y-auto rounded-2xl bg-background px-5 py-3"
         />
       </div>
-      {error ? <span className="text-sm font-semibold text-red-600">{error}</span> : null}
+      {error ? (
+        <span className="text-sm font-semibold text-red-600">{error.message || "something went wrong!"}</span>
+      ) : null}
       <div className="flex justify-end">
-        <LoadingButton loading={isLoading} onClick={onSubmit} disabled={!input.trim()} className="min-w-20">
+        <LoadingButton loading={isPending} onClick={onSubmit} disabled={!input.trim()} className="min-w-20">
           Post
         </LoadingButton>
       </div>
