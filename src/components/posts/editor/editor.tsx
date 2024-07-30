@@ -1,6 +1,6 @@
 "use client"
 
-import React from "react"
+import React, { useState } from "react"
 import Placeholder from "@tiptap/extension-placeholder"
 import { EditorContent, useEditor } from "@tiptap/react"
 import StarterKit from "@tiptap/starter-kit"
@@ -11,6 +11,8 @@ import UserAvatar from "@/components/ui/user-avatar"
 import { submitPost } from "./actions"
 
 import "./style.css"
+
+import LoadingButton from "@/components/ui/loading-button"
 
 type Props = {}
 
@@ -32,9 +34,19 @@ const Editor = (props: Props) => {
       blockSeparator: "\n",
     }) || ""
 
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState("")
   const onSubmit = async () => {
-    await submitPost(input)
-    myEditor?.commands.clearContent()
+    try {
+      setError("")
+      setIsLoading(true)
+      await submitPost(input)
+      myEditor?.commands.clearContent()
+    } catch (error) {
+      setError("something went wrong!")
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -46,10 +58,11 @@ const Editor = (props: Props) => {
           className="max-h-[20rem] w-full overflow-y-auto rounded-2xl bg-background px-5 py-3"
         />
       </div>
+      {error ? <span className="text-sm font-semibold text-red-600">{error}</span> : null}
       <div className="flex justify-end">
-        <Button onClick={onSubmit} disabled={!input.trim()} className="min-w-20">
+        <LoadingButton loading={isLoading} onClick={onSubmit} disabled={!input.trim()} className="min-w-20">
           Post
-        </Button>
+        </LoadingButton>
       </div>
     </div>
   )
