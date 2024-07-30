@@ -18,3 +18,11 @@ export const postDataInclude = {
 } satisfies Prisma.PostInclude
 
 export type PostData = Prisma.PostGetPayload<{ include: typeof postDataInclude }>
+
+export type PostsPage = {
+  posts: PostData[]
+  search: {
+    nextCursor?: string
+    pageSize: number
+  }
+}
