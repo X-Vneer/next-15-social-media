@@ -13,12 +13,12 @@ import PostsLoadingSkeleton from "./posts/post-loading-skeleton"
 
 type Props = {}
 
-const ForYouFeed = (props: Props) => {
+const FollowingFeed = (props: Props) => {
   const { data, fetchNextPage, hasNextPage, status, isFetching, isFetchingNextPage } = useInfiniteQuery({
-    queryKey: ["posts-feed", "for-you"],
+    queryKey: ["posts-feed", "following"],
     queryFn: async ({ pageParam }) => {
       return await kyInstance
-        .get("/api/v1/posts/for-you", {
+        .get("/api/v1/posts/following", {
           searchParams: {
             cursor: pageParam || "",
           },
@@ -62,4 +62,4 @@ const ForYouFeed = (props: Props) => {
   )
 }
 
-export default ForYouFeed
+export default FollowingFeed
