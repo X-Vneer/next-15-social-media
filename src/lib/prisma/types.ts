@@ -27,3 +27,9 @@ export type PostsPage = {
     pageSize: number
   }
 }
+
+export type FollowerInfo = {
+  followers: number
+  isFollowedByMe: boolean
+  isFollowingMe: boolean
+}
