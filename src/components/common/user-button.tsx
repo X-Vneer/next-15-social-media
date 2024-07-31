@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { useSession } from "@/providers/session-provider"
 import { useQueryClient } from "@tanstack/react-query"
-import { Check, LogOutIcon, Monitor, Moon, Sun, UserIcon } from "lucide-react"
+import { Check, LogOutIcon, Monitor, Moon, Sun, User, UserIcon } from "lucide-react"
 import { useTheme } from "next-themes"
 
 import { cn } from "@/lib/utils"
@@ -37,10 +37,12 @@ export default function UserButton({ className }: UserButtonProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button className={cn("flex-none rounded-full", className)}>
+        <button title="user" type="button" className={cn("flex-none rounded-full", className)}>
           <Avatar>
             <AvatarImage src={user.avatarUrl || ""} />
-            <AvatarFallback>{user.username[0].toUpperCase()}</AvatarFallback>
+            <AvatarFallback>
+              <User />
+            </AvatarFallback>
           </Avatar>
         </button>
       </DropdownMenuTrigger>

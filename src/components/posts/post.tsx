@@ -16,7 +16,7 @@ const Post = (props: Props) => {
   const { user } = useSession()
   return (
     <article className="space-y-3 rounded-2xl bg-card p-5 shadow-sm">
-      <div className="group/post flex justify-between gap-3">
+      <div className="flex justify-between gap-3">
         <div className="flex flex-wrap gap-3">
           <Link href={`/users/${props.user.username}`}>
             <UserAvatar user={props.user} />
@@ -30,12 +30,7 @@ const Post = (props: Props) => {
             </Link>
           </div>
         </div>
-        {props.user.id === user.id && (
-          <PostMoreButton
-            post={props}
-            className="shrink-0 opacity-0 transition-opacity group-hover/post:opacity-100"
-          />
-        )}
+        {props.user.id === user.id && <PostMoreButton post={props} className="shrink-0 transition-opacity" />}
       </div>
       <div className="whitespace-pre-line break-words">{props.content}</div>
     </article>

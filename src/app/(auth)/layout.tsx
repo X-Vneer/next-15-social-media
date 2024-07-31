@@ -8,7 +8,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
 
   return (
     <main className="flex h-screen items-center justify-center p-5">
-      <div className="flex h-full max-h-[40rem] w-full max-w-[64rem] overflow-hidden rounded-lg bg-card shadow-xl">
+      <div className="flex w-full max-w-[64rem] overflow-hidden rounded-lg bg-card shadow-xl lg:h-full lg:max-h-[40rem]">
         {children}
       </div>
     </main>
