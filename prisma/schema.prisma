@@ -24,8 +24,10 @@ model User {
   avatarUrl    String?
   bio          String?
   sessions     Session[]
-  createdAt    DateTime  @default(now())
   posts        Post[]
+  Following    Follow[]  @relation("following")
+  Follower     Follow[]  @relation("followers")
+  createdAt    DateTime  @default(now())
 
   @@map("users")
 }
@@ -48,4 +50,14 @@ model Post {
   updatedAt DateTime @updatedAt()
 
   @@map("posts")
+}
+
+model Follow {
+  followerId  String
+  follower    User   @relation("following", fields: [followerId], references: [id], onDelete: Cascade)
+  followingId String
+  following   User   @relation("followers", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId, followingId])
+  @@map("follows")
 }
