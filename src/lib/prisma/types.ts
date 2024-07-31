@@ -1,24 +1,44 @@
 import { Prisma } from "@prisma/client"
 
-export const userDataSelect = {
-  username: true,
-  displayName: true,
-  avatarUrl: true,
-  id: true,
-} satisfies Prisma.UserSelect
-
-export const postDataInclude = {
-  user: {
-    select: {
-      id: true,
-      username: true,
-      displayName: true,
-      avatarUrl: true,
+export function getUerDateSelect(userId: string) {
+  return {
+    username: true,
+    displayName: true,
+    avatarUrl: true,
+    id: true,
+    following: {
+      where: {
+        followingId: userId,
+      },
+      select: {
+        followingId: true,
+      },
     },
-  },
-} satisfies Prisma.PostInclude
+    followers: {
+      where: {
+        followerId: userId,
+      },
+      select: {
+        followerId: true,
+      },
+    },
+    _count: {
+      select: {
+        followers: true,
+      },
+    },
+  } satisfies Prisma.UserSelect
+}
 
-export type PostData = Prisma.PostGetPayload<{ include: typeof postDataInclude }>
+export function getPostDataInclude(userId: string) {
+  return {
+    user: {
+      select: getUerDateSelect(userId),
+    },
+  } satisfies Prisma.PostInclude
+}
+
+export type PostData = Prisma.PostGetPayload<{ include: ReturnType<typeof getPostDataInclude> }>
 
 export type PostsPage = {
   posts: PostData[]

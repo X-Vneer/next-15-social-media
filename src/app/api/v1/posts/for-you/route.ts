@@ -2,18 +2,18 @@ import { NextRequest, NextResponse } from "next/server"
 
 import { validateRequest } from "@/lib/lucia"
 import prisma from "@/lib/prisma"
-import { postDataInclude } from "@/lib/prisma/types"
+import { getPostDataInclude } from "@/lib/prisma/types"
 
 export async function GET(req: NextRequest) {
   try {
-    const user = await validateRequest()
+    const { user } = await validateRequest()
 
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
     const cursor = req.nextUrl.searchParams.get("cursor") || undefined
     const pageSize = 15
     const posts = await prisma.post.findMany({
-      include: postDataInclude,
+      include: getPostDataInclude(user.id),
       orderBy: {
         createdAt: "desc",
       },

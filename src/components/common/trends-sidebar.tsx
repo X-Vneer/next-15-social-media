@@ -5,10 +5,10 @@ import { Loader2 } from "lucide-react"
 
 import { validateRequest } from "@/lib/lucia"
 import prisma from "@/lib/prisma"
-import { userDataSelect } from "@/lib/prisma/types"
+import { getUerDateSelect } from "@/lib/prisma/types"
 import { formatNumber } from "@/lib/utils"
 
-import { Button } from "../ui/button"
+import FollowButton from "../follow-button"
 import UserAvatar from "../ui/user-avatar"
 
 type Props = {}
@@ -29,10 +29,15 @@ const WhoToFollow = async () => {
   if (!user) return null
 
   const usersToFollow = await prisma.user.findMany({
-    select: userDataSelect,
+    select: getUerDateSelect(user.id),
     where: {
       NOT: {
         id: user.id,
+      },
+      followers: {
+        none: {
+          followerId: user.id,
+        },
       },
     },
     take: 5,
@@ -50,7 +55,14 @@ const WhoToFollow = async () => {
               <p className="line-clamp-1 break-all text-muted-foreground">@{user.username}</p>
             </div>
           </Link>
-          <Button>Follow</Button>
+          <FollowButton
+            userId={user.id}
+            initialState={{
+              isFollowedByMe: user.followers.some((e) => e.followerId === user.id),
+              followers: user._count.followers,
+              isFollowingMe: user.following.some((e) => e.followingId === user.id),
+            }}
+          />
         </div>
       ))}
     </div>
