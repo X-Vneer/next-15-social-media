@@ -30,7 +30,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} min-h-svh`}>
         <ThemeProvider attribute="class" enableSystem defaultTheme="system" disableTransitionOnChange>
           {children}
         </ThemeProvider>

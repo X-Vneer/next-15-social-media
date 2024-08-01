@@ -1,9 +1,12 @@
+import { webcrypto } from "node:crypto"
 import { cache } from "react"
 import { cookies } from "next/headers"
 import { PrismaAdapter } from "@lucia-auth/adapter-prisma"
 import { Lucia, Session, User } from "lucia"
 
 import prisma from "../prisma"
+
+globalThis.crypto = webcrypto as Crypto
 
 const adapter = new PrismaAdapter(prisma.session, prisma.user)
 

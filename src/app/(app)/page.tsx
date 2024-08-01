@@ -8,7 +8,7 @@ import Editor from "@/components/posts/editor/editor"
 
 export default function Page() {
   return (
-    <main className="flex w-full min-w-0 gap-5">
+    <main className="flex min-h-[calc(100vh-11rem)] w-full min-w-0 gap-5">
       <div className="w-full min-w-0 space-y-5">
         <Editor />
         <Tabs defaultValue="for-you">
