@@ -11,6 +11,7 @@ import { submitPost } from "./actions"
 
 import "./style.css"
 
+import { useSession } from "@/providers/session-provider"
 import { InfiniteData, QueryFilters, useMutation, useQueryClient } from "@tanstack/react-query"
 
 import { PostData, PostsPage } from "@/lib/prisma/types"
@@ -37,6 +38,7 @@ const Editor = (props: Props) => {
       blockSeparator: "\n",
     }) || ""
 
+  const { user } = useSession()
   const { toast } = useToast()
   const queryClient = useQueryClient()
   const { error, isPending, mutate } = useMutation({
@@ -46,9 +48,16 @@ const Editor = (props: Props) => {
         throw Error(newPost.error)
       }
 
-      const queryFilter: QueryFilters = {
-        queryKey: ["posts-feed", "for-you"],
-      }
+      // query filter is a queryKey that select user for-you feeds and user-posts for logged in user when posting a new post
+      const queryFilter = {
+        queryKey: ["post-feed"],
+        predicate: (query) => {
+          return (
+            query.queryKey.includes("for-you") ||
+            (query.queryKey.includes("user-posts") && query.queryKey.includes(user.id))
+          )
+        },
+      } satisfies QueryFilters
 
       // here we cancel any ongoing queries to prevent bugs with infinite scroll
       await queryClient.cancelQueries(queryFilter)
@@ -73,7 +82,7 @@ const Editor = (props: Props) => {
         queryClient.invalidateQueries({
           queryKey: queryFilter.queryKey,
           predicate: (query) => {
-            return !query.state.data
+            return queryFilter.predicate(query) && !query.state.data
           },
         })
       })

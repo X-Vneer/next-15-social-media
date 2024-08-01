@@ -15,7 +15,7 @@ type Props = {}
 
 const FollowingFeed = (props: Props) => {
   const { data, fetchNextPage, hasNextPage, status, isFetching, isFetchingNextPage } = useInfiniteQuery({
-    queryKey: ["posts-feed", "following"],
+    queryKey: ["post-feed", "following"],
     queryFn: async ({ pageParam }) => {
       return await kyInstance
         .get("/api/v1/posts/following", {

@@ -15,7 +15,7 @@ type Props = {}
 
 const ForYouFeed = (props: Props) => {
   const { data, fetchNextPage, hasNextPage, status, isFetching, isFetchingNextPage } = useInfiniteQuery({
-    queryKey: ["posts-feed", "for-you"],
+    queryKey: ["post-feed", "for-you"],
     queryFn: async ({ pageParam }) => {
       return await kyInstance
         .get("/api/v1/posts/for-you", {
