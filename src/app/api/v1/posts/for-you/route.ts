@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
       cursor: cursor ? { id: cursor } : undefined,
     })
 
-    const nextCursor = posts.length > pageSize ? posts[posts.length - 1].id : undefined
+    const nextCursor = posts.length > pageSize ? posts[pageSize].id : undefined
 
     return NextResponse.json(
       {

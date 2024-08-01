@@ -10,9 +10,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "./avatar"
 type Props = {
   className?: string
   user?: Omit<User, "id" | "googleId">
+  size?: number
 }
 
-const UserAvatar = ({ className, user }: Props) => {
+const UserAvatar = ({ className, user, size }: Props) => {
   const session = useSession()
 
   user ??= session.user
@@ -20,7 +21,7 @@ const UserAvatar = ({ className, user }: Props) => {
     <Avatar className={className}>
       <AvatarImage src={user.avatarUrl || ""} />
       <AvatarFallback>
-        <UserIcon />
+        <UserIcon size={size || 24} strokeWidth={1} />
       </AvatarFallback>
     </Avatar>
   )
