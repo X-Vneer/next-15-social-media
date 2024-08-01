@@ -17,7 +17,7 @@ const useDeletePostMutation = () => {
     mutationFn: deletePost,
     async onSuccess(deletedPost) {
       const queryFilter: QueryFilters = {
-        queryKey: ["posts-feed"],
+        queryKey: ["post-feed"],
       }
       // here we cancel any ongoing queries to prevent bugs with infinite scroll
       await queryClient.cancelQueries(queryFilter)
