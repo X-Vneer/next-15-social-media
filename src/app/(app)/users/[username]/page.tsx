@@ -7,7 +7,7 @@ import { formatDate } from "date-fns"
 
 import { validateRequest } from "@/lib/lucia"
 import prisma from "@/lib/prisma"
-import { FollowerInfo, getUerDateSelect, UserData } from "@/lib/prisma/types"
+import { FollowerInfo, getUserDateSelect, UserData } from "@/lib/prisma/types"
 import { formatNumber } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Linkify } from "@/components/ui/linkify"
@@ -31,7 +31,7 @@ export const getUser = cache(async (username: string) => {
         equals: username,
       },
     },
-    select: getUerDateSelect(session.user!.id),
+    select: getUserDateSelect(session.user!.id),
   })
   if (!user) notFound()
 

@@ -5,7 +5,7 @@ import { Loader2 } from "lucide-react"
 
 import { validateRequest } from "@/lib/lucia"
 import prisma from "@/lib/prisma"
-import { getUerDateSelect } from "@/lib/prisma/types"
+import { getUserDateSelect } from "@/lib/prisma/types"
 import { formatNumber } from "@/lib/utils"
 
 import FollowButton from "../follow-button"
@@ -30,7 +30,7 @@ const WhoToFollow = async () => {
   if (!user) return null
 
   const usersToFollow = await prisma.user.findMany({
-    select: getUerDateSelect(user.id),
+    select: getUserDateSelect(user.id),
     where: {
       NOT: {
         id: user.id,

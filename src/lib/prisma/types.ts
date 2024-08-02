@@ -1,6 +1,6 @@
 import { Prisma } from "@prisma/client"
 
-export function getUerDateSelect(userId: string) {
+export function getUserDateSelect(userId: string) {
   return {
     username: true,
     displayName: true,
@@ -33,12 +33,12 @@ export function getUerDateSelect(userId: string) {
   } satisfies Prisma.UserSelect
 }
 
-export type UserData = Prisma.UserGetPayload<{ select: ReturnType<typeof getUerDateSelect> }>
+export type UserData = Prisma.UserGetPayload<{ select: ReturnType<typeof getUserDateSelect> }>
 
 export function getPostDataInclude(userId: string) {
   return {
     user: {
-      select: getUerDateSelect(userId),
+      select: getUserDateSelect(userId),
     },
   } satisfies Prisma.PostInclude
 }
