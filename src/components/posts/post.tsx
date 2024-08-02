@@ -7,6 +7,7 @@ import { useSession } from "@/providers/session-provider"
 import { PostData } from "@/lib/prisma/types"
 import { formatRelativeDate } from "@/lib/utils"
 
+import { Linkify } from "../ui/linkify"
 import UserAvatar from "../ui/user-avatar"
 import PostMoreButton from "./post-more-button"
 
@@ -32,7 +33,9 @@ const Post = (props: Props) => {
         </div>
         {props.user.id === user.id && <PostMoreButton post={props} className="shrink-0 transition-opacity" />}
       </div>
-      <div className="whitespace-pre-line break-words">{props.content}</div>
+      <Linkify>
+        <div className="whitespace-pre-line break-words">{props.content}</div>
+      </Linkify>
     </article>
   )
 }
