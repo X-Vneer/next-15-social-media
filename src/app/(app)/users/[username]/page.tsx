@@ -10,6 +10,7 @@ import prisma from "@/lib/prisma"
 import { FollowerInfo, getUerDateSelect, UserData } from "@/lib/prisma/types"
 import { formatNumber } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
+import { Linkify } from "@/components/ui/linkify"
 import UserAvatar from "@/components/ui/user-avatar"
 import TrendSidebar from "@/components/common/trends-sidebar"
 import FollowButton from "@/components/follow-button"
@@ -105,7 +106,9 @@ async function UserProfile({ user, loggedInUserId }: UserProfileProps) {
       {user.bio && (
         <>
           <hr />
-          <div className="overflow-hidden whitespace-pre-line break-words">{user.bio}</div>
+          <Linkify>
+            <div className="overflow-hidden whitespace-pre-line break-words">{user.bio}</div>
+          </Linkify>
         </>
       )}
     </div>

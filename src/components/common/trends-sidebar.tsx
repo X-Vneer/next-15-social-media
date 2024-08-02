@@ -10,6 +10,7 @@ import { formatNumber } from "@/lib/utils"
 
 import FollowButton from "../follow-button"
 import UserAvatar from "../ui/user-avatar"
+import UserTooltip from "../ui/user-tooltip"
 
 type Props = {}
 
@@ -48,13 +49,15 @@ const WhoToFollow = async () => {
       <div className="text-xl font-bold">Who to follow</div>
       {usersToFollow.map((user) => (
         <div key={user.id} className="flex items-center justify-between gap-3">
-          <Link href={`/users/${user.username}`} className="flex items-center gap-3">
-            <UserAvatar user={user} />
-            <div>
-              <p className="line-clamp-1 break-all font-semibold hover:underline">{user.displayName}</p>
-              <p className="line-clamp-1 break-all text-muted-foreground">@{user.username}</p>
-            </div>
-          </Link>
+          <UserTooltip user={user}>
+            <Link href={`/users/${user.username}`} className="flex items-center gap-3">
+              <UserAvatar user={user} />
+              <div>
+                <p className="line-clamp-1 break-all font-semibold hover:underline">{user.displayName}</p>
+                <p className="line-clamp-1 break-all text-muted-foreground">@{user.username}</p>
+              </div>
+            </Link>
+          </UserTooltip>
           <FollowButton
             userId={user.id}
             initialState={{

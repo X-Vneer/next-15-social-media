@@ -9,6 +9,7 @@ import { formatRelativeDate } from "@/lib/utils"
 
 import { Linkify } from "../ui/linkify"
 import UserAvatar from "../ui/user-avatar"
+import UserTooltip from "../ui/user-tooltip"
 import PostMoreButton from "./post-more-button"
 
 type Props = PostData
@@ -23,9 +24,11 @@ const Post = (props: Props) => {
             <UserAvatar user={props.user} />
           </Link>
           <div>
-            <Link href={`/users/${props.user.username}`} className="block font-medium hover:underline">
-              {props.user.displayName}
-            </Link>
+            <UserTooltip user={props.user}>
+              <Link href={`/users/${props.user.username}`} className="block font-medium hover:underline">
+                {props.user.displayName}
+              </Link>
+            </UserTooltip>
             <Link href={`/posts/${props.id}`} className="block text-sm text-muted-foreground hover:underline">
               {formatRelativeDate(props.createdAt)}
             </Link>
