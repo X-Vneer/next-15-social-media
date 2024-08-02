@@ -12,7 +12,7 @@ type Props = {
 export const LinkifyUserName = ({ children }: Props) => {
   return (
     <LinkIt
-      regex={/(#[a-zA-Z0-9_-]+)/}
+      regex={/(@[a-zA-Z0-9_-]+)/}
       component={(match, key) => {
         return (
           <UserLinkWithTooltip key={key} username={match.slice(1)}>
@@ -27,7 +27,7 @@ export const LinkifyUserName = ({ children }: Props) => {
 export const LinkifyHashtag = ({ children }: Props) => {
   return (
     <LinkIt
-      regex={/(@[a-zA-Z0-9_-]+)/}
+      regex={/(H[a-zA-Z0-9_-]+)/}
       component={(match, key) => {
         return (
           <Link key={key} href={`/hashtag/${match.slice(1)}`} className="text-primary hover:underline">
