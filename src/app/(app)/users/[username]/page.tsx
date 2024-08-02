@@ -53,16 +53,13 @@ export default async function Page({ params }: { params: { username: string } })
   const user = await getUser(params.username)
 
   return (
-    <main className="flex w-full min-w-0 gap-5">
-      <div className="w-full min-w-0 space-y-5">
-        <UserProfile user={user} loggedInUserId={session.user!.id} />
-        <div className="rounded-2xl bg-card p-5 shadow-sm">
-          <h2 className="text-center text-2xl font-bold">{user.displayName}&apos;s posts</h2>
-        </div>
-        <UserPosts userId={user.id} />
+    <>
+      <UserProfile user={user} loggedInUserId={session.user!.id} />
+      <div className="rounded-2xl bg-card p-5 shadow-sm">
+        <h2 className="text-center text-2xl font-bold">{user.displayName}&apos;s posts</h2>
       </div>
-      <TrendSidebar />
-    </main>
+      <UserPosts userId={user.id} />
+    </>
   )
 }
 

@@ -8,23 +8,20 @@ import Editor from "@/components/posts/editor/editor"
 
 export default function Page() {
   return (
-    <main className="flex min-h-[calc(100vh-11rem)] w-full min-w-0 gap-5">
-      <div className="w-full min-w-0 space-y-5">
-        <Editor />
-        <Tabs defaultValue="for-you">
-          <TabsList className="mb-2">
-            <TabsTrigger value="for-you">For You</TabsTrigger>
-            <TabsTrigger value="following">Following</TabsTrigger>
-          </TabsList>
-          <TabsContent value="for-you">
-            <ForYouFeed />
-          </TabsContent>
-          <TabsContent value="following">
-            <FollowingFeed />
-          </TabsContent>
-        </Tabs>
-      </div>
-      <TrendSidebar />
-    </main>
+    <>
+      <Editor />
+      <Tabs defaultValue="for-you">
+        <TabsList className="mb-2">
+          <TabsTrigger value="for-you">For You</TabsTrigger>
+          <TabsTrigger value="following">Following</TabsTrigger>
+        </TabsList>
+        <TabsContent value="for-you">
+          <ForYouFeed />
+        </TabsContent>
+        <TabsContent value="following">
+          <FollowingFeed />
+        </TabsContent>
+      </Tabs>
+    </>
   )
 }
