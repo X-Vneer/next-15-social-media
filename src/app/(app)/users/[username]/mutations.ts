@@ -55,6 +55,7 @@ const useUpdateProfileMutation = () => {
         }
       })
 
+      // to update user profile server component
       router.refresh()
       toast({
         description: "Profile updated successfully",
