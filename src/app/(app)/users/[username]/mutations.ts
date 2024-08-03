@@ -16,7 +16,7 @@ const useUpdateProfileMutation = () => {
 
   const { startUpload: startAvatarUpload } = useUploadThing("avatar")
   const mutation = useMutation({
-    mutationFn: async (values: UpdateUserProfileType, avatar?: File) => {
+    mutationFn: async ({ values, avatar }: { values: UpdateUserProfileType; avatar?: File }) => {
       return Promise.all([
         UpdateUserProfile(values),
         avatar ? startAvatarUpload([avatar]) : Promise.resolve(),

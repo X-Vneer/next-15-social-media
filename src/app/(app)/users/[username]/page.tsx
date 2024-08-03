@@ -16,6 +16,7 @@ import TrendSidebar from "@/components/common/trends-sidebar"
 import FollowButton from "@/components/follow-button"
 import FollowerCount from "@/components/followers-count"
 import UserPosts from "@/components/posts/user-posts"
+import EditProfileButton from "@/components/uesr/edit-profile-button"
 
 // import { formatNumber, formatRelativeDate } from "@/lib/utils"
 // import { Button } from "@/components/ui/button"
@@ -52,6 +53,7 @@ export default async function Page({ params }: { params: { username: string } })
   const session = await validateRequest()
   if (!session) return <p className="my-10 text-center text-destructive">Not logged in!</p>
   const user = await getUser(params.username)
+  console.log("🚀 ~ Page ~ user:", user)
 
   return (
     <>
@@ -98,7 +100,7 @@ async function UserProfile({ user, loggedInUserId }: UserProfileProps) {
           </div>
         </div>
         {user.id === loggedInUserId ? (
-          <Button>Edit profile</Button>
+          <EditProfileButton user={user} />
         ) : (
           <FollowButton userId={user.id} initialState={followerInfo} />
         )}
