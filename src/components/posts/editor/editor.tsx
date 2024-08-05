@@ -1,22 +1,23 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { useRef } from "react"
 import Placeholder from "@tiptap/extension-placeholder"
 import { EditorContent, useEditor } from "@tiptap/react"
 import StarterKit from "@tiptap/starter-kit"
 
 import UserAvatar from "@/components/ui/user-avatar"
 
-import { submitPost } from "./actions"
-
 import "./style.css"
 
-import { useSession } from "@/providers/session-provider"
-import { InfiniteData, QueryFilters, useMutation, useQueryClient } from "@tanstack/react-query"
+import Image from "next/image"
+import { ImageIcon, Loader2, X } from "lucide-react"
 
-import { PostData, PostsPage } from "@/lib/prisma/types"
+import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
 import LoadingButton from "@/components/ui/loading-button"
-import { useToast } from "@/components/ui/use-toast"
+
+import useMediaUpload, { Attachment } from "./useMediaUpload"
+import useSubmitPostMutation from "./useSubmitPostMutation"
 
 type Props = {}
 
@@ -38,66 +39,26 @@ const Editor = (props: Props) => {
       blockSeparator: "\n",
     }) || ""
 
-  const { user } = useSession()
-  const { toast } = useToast()
-  const queryClient = useQueryClient()
-  const { error, isPending, mutate } = useMutation({
-    mutationFn: submitPost,
-    onSuccess: async (newPost) => {
-      if ("error" in newPost) {
-        throw Error(newPost.error)
-      }
+  const { mutate, isPending, error } = useSubmitPostMutation()
 
-      // query filter is a queryKey that select user for-you feeds and user-posts for logged in user when posting a new post
-      const queryFilter = {
-        queryKey: ["post-feed"],
-        predicate: (query) => {
-          return (
-            query.queryKey.includes("for-you") ||
-            (query.queryKey.includes("user-posts") && query.queryKey.includes(user.id))
-          )
-        },
-      } satisfies QueryFilters
-
-      // here we cancel any ongoing queries to prevent bugs with infinite scroll
-      await queryClient.cancelQueries(queryFilter)
-      // here we mutate the cash directly for better performance
-      queryClient.setQueriesData<InfiniteData<PostsPage, string | null>>(queryFilter, (oldData) => {
-        const firstPage = oldData?.pages[0]
-        if (firstPage) {
-          return {
-            pageParams: oldData.pageParams,
-            pages: [
-              {
-                posts: [newPost, ...firstPage.posts],
-                search: firstPage.search,
-              },
-              ...oldData.pages.slice(1),
-            ],
-          }
-        }
-
-        // if there was NO first page we invalidate queries to fetch the first page
-        // incase we canceled the query we need to fetch the first page
-        queryClient.invalidateQueries({
-          queryKey: queryFilter.queryKey,
-          predicate: (query) => {
-            return queryFilter.predicate(query) && !query.state.data
-          },
-        })
-      })
-      myEditor?.commands.clearContent()
-    },
-    onError: (error) => {
-      toast({
-        variant: "destructive",
-        description: "Failed to post, Please try again.",
-      })
-    },
-  })
-
+  const {
+    startUpload,
+    attachments,
+    uploadProgress,
+    removeAttachment,
+    reset: resetMediaUpload,
+    isUploading,
+  } = useMediaUpload()
   function onSubmit() {
-    mutate(input)
+    mutate(
+      { content: input, mediaIds: attachments.map((file) => file.mediaId).filter(Boolean) as string[] },
+      {
+        onSuccess: () => {
+          myEditor?.commands.clearContent()
+          resetMediaUpload()
+        },
+      },
+    )
   }
 
   return (
@@ -109,11 +70,29 @@ const Editor = (props: Props) => {
           className="max-h-[20rem] w-full overflow-y-auto rounded-2xl bg-background px-5 py-3"
         />
       </div>
+      {!!attachments.length && (
+        <AttachmentPreviews attachments={attachments} removeAttachment={removeAttachment} />
+      )}
+
       {error ? (
         <span className="text-sm font-semibold text-red-600">{error.message || "something went wrong!"}</span>
       ) : null}
-      <div className="flex justify-end">
-        <LoadingButton loading={isPending} onClick={onSubmit} disabled={!input.trim()} className="min-w-20">
+      <div className="flex items-center justify-end gap-3">
+        {isUploading && (
+          <>
+            <span className="text-sm">{uploadProgress ?? 0}%</span>
+            <Loader2 className="size-5 animate-spin text-primary" />
+          </>
+        )}
+        <AddAttachmentsButton
+          startFilesUpload={startUpload}
+          disabled={isUploading || attachments.length >= 5}
+        />
+        <LoadingButton
+          loading={isPending}
+          onClick={onSubmit}
+          disabled={!input.trim() || isUploading}
+          className="min-w-20">
           Post
         </LoadingButton>
       </div>
@@ -122,3 +101,98 @@ const Editor = (props: Props) => {
 }
 
 export default Editor
+
+interface AddAttachmentsButtonProps {
+  startFilesUpload: (files: File[]) => void
+  disabled: boolean
+}
+
+function AddAttachmentsButton({ startFilesUpload, disabled }: AddAttachmentsButtonProps) {
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  return (
+    <>
+      <Button
+        variant="ghost"
+        size="icon"
+        className="text-primary hover:text-primary"
+        disabled={disabled}
+        onClick={() => fileInputRef.current?.click()}>
+        <ImageIcon size={20} />
+      </Button>
+      <input
+        title="select files"
+        type="file"
+        accept="image/*, video/*"
+        multiple
+        ref={fileInputRef}
+        className="sr-only hidden"
+        onChange={(e) => {
+          const files = Array.from(e.target.files || [])
+          if (files.length) {
+            startFilesUpload(files)
+            e.target.value = ""
+          }
+        }}
+      />
+    </>
+  )
+}
+
+interface AttachmentPreviewsProps {
+  attachments: Attachment[]
+  removeAttachment: (fileName: string) => void
+}
+
+function AttachmentPreviews({ attachments, removeAttachment }: AttachmentPreviewsProps) {
+  return (
+    <div className={cn("flex flex-col gap-3", attachments.length > 1 && "sm:grid sm:grid-cols-2")}>
+      {attachments.map((attachment) => (
+        <AttachmentPreview
+          key={attachment.file.name}
+          attachment={attachment}
+          onRemoveClick={() => removeAttachment(attachment.file.name)}
+        />
+      ))}
+    </div>
+  )
+}
+
+interface AttachmentPreviewProps {
+  attachment: Attachment
+  onRemoveClick: () => void
+}
+
+function AttachmentPreview({
+  attachment: { file, mediaId, isUploading },
+  onRemoveClick,
+}: AttachmentPreviewProps) {
+  const src = URL.createObjectURL(file)
+
+  return (
+    <div className={cn("relative mx-auto size-fit", isUploading && "opacity-50")}>
+      {file.type.startsWith("image") ? (
+        <Image
+          src={src}
+          alt="Attachment preview"
+          width={500}
+          height={500}
+          className="size-fit max-h-[30rem] rounded-2xl"
+        />
+      ) : (
+        <video controls className="size-fit max-h-[30rem] rounded-2xl">
+          <source src={src} type={file.type} />
+        </video>
+      )}
+      {!isUploading && (
+        <button
+          type="button"
+          title="Remove attachment"
+          onClick={onRemoveClick}
+          className="absolute right-3 top-3 rounded-full bg-foreground p-1.5 text-background transition-colors hover:bg-foreground/60">
+          <X size={20} />
+        </button>
+      )}
+    </div>
+  )
+}
