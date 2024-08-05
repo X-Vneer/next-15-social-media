@@ -18,26 +18,12 @@ import FollowerCount from "@/components/followers-count"
 import UserPosts from "@/components/posts/user-posts"
 import EditProfileButton from "@/components/uesr/edit-profile-button"
 
+import { getUser } from "./utils"
+
 // import { formatNumber, formatRelativeDate } from "@/lib/utils"
 // import { Button } from "@/components/ui/button"
 // import UserAvatar from "@/components/ui/user-avatar"
 // import FollowButton from "@/components/follow-button"
-
-export const getUser = cache(async (username: string) => {
-  console.log("🚀 ~ getUser ~ username:", username)
-  const session = await validateRequest()
-  const user = await prisma.user.findFirst({
-    where: {
-      username: {
-        equals: username,
-      },
-    },
-    select: getUserDateSelect(session.user!.id),
-  })
-  if (!user) notFound()
-
-  return user
-})
 
 export async function generateMetadata({
   params: { username },
