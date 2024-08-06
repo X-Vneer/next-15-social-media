@@ -37,9 +37,8 @@ export async function generateMetadata({
 }
 export default async function Page({ params }: { params: { username: string } }) {
   const session = await validateRequest()
-  if (!session) return <p className="my-10 text-center text-destructive">Not logged in!</p>
+  if (!session.user) return <p className="my-10 text-center text-destructive">Not logged in!</p>
   const user = await getUser(params.username)
-  console.log("🚀 ~ Page ~ user:", user)
 
   return (
     <>

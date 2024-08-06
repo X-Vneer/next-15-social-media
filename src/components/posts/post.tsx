@@ -3,12 +3,14 @@
 import React from "react"
 import Image from "next/image"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 import { useSession } from "@/providers/session-provider"
 import { Media } from "@prisma/client"
 
 import { PostData } from "@/lib/prisma/types"
 import { cn, formatRelativeDate } from "@/lib/utils"
 
+import FollowButton from "../follow-button"
 import { Linkify } from "../ui/linkify"
 import UserAvatar from "../ui/user-avatar"
 import UserTooltip from "../ui/user-tooltip"
@@ -18,6 +20,8 @@ type Props = PostData
 
 const Post = (props: Props) => {
   const { user } = useSession()
+  const pathName = usePathname()
+  const isPostPage = pathName === `/posts/${props.id}`
   return (
     <article className="space-y-3 rounded-2xl bg-card p-5 shadow-sm">
       <div className="flex justify-between gap-3">
@@ -31,12 +35,25 @@ const Post = (props: Props) => {
                 {props.user.displayName}
               </Link>
             </UserTooltip>
-            <Link href={`/posts/${props.id}`} className="block text-sm text-muted-foreground hover:underline">
+            <Link
+              href={`/posts/${props.id}`}
+              className="block text-sm text-muted-foreground hover:underline"
+              suppressHydrationWarning>
               {formatRelativeDate(props.createdAt)}
             </Link>
           </div>
         </div>
         {props.user.id === user.id && <PostMoreButton post={props} className="shrink-0 transition-opacity" />}
+        {user.id !== props.user.id && isPostPage && (
+          <FollowButton
+            userId={user.id}
+            initialState={{
+              followers: props.user._count.followers,
+              isFollowedByMe: props.user.followers.some(({ followerId }) => followerId === user.id),
+              isFollowingMe: props.user.following.some(({ followingId }) => followingId === user.id),
+            }}
+          />
+        )}
       </div>
       <Linkify>
         <div className="whitespace-pre-line break-words">{props.content}</div>
@@ -83,9 +100,7 @@ function MediaPreview({ media }: MediaPreviewProps) {
   if (media.type === "VIDEO") {
     return (
       <div>
-        <video controls className="mx-auto size-fit max-h-[30rem] rounded-2xl">
-          <source src={media.url} type={media.type} />
-        </video>
+        <video src={media.url} controls className="mx-auto size-fit max-h-[30rem] rounded-2xl"></video>
       </div>
     )
   }
