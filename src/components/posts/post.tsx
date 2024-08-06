@@ -83,7 +83,9 @@ function MediaPreview({ media }: MediaPreviewProps) {
   if (media.type === "VIDEO") {
     return (
       <div>
-        <video src={media.url} controls className="mx-auto size-fit max-h-[30rem] rounded-2xl" />
+        <video controls className="mx-auto size-fit max-h-[30rem] rounded-2xl">
+          <source src={media.url} type={media.type} />
+        </video>
       </div>
     )
   }
