@@ -14,6 +14,7 @@ import FollowButton from "../follow-button"
 import { Linkify } from "../ui/linkify"
 import UserAvatar from "../ui/user-avatar"
 import UserTooltip from "../ui/user-tooltip"
+import LikeButton from "./like-button"
 import PostMoreButton from "./post-more-button"
 
 type Props = PostData
@@ -60,6 +61,14 @@ const Post = (props: Props) => {
       </Linkify>
 
       {!!props.attachments.length && <MediaPreviews attachments={props.attachments} />}
+      <hr />
+      <LikeButton
+        initialState={{
+          likes: props._count.likes,
+          isLikedByMe: props.likes.some(({ userId }) => userId === user.id),
+        }}
+        postId={props.id}
+      />
     </article>
   )
 }
