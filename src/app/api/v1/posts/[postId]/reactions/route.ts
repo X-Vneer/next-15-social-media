@@ -60,7 +60,8 @@ export const POST = async (req: NextRequest, { params: { postId } }: { params: {
       },
       update: {},
     })
-    return new Response("ok")
+    console.log("🚀 ~ POST ~ post:", post)
+    return new Response()
   } catch (err) {
     console.log("🚀 ~ POST ~ err:", err)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
@@ -76,7 +77,8 @@ export const DELETE = async (req: NextRequest, { params: { postId } }: { params:
         postId,
       },
     })
-    return new Response("ok")
+    console.log("🚀 ~ DELETE ~ post:", post)
+    return new Response()
   } catch (err) {
     console.log("🚀 ~ POST ~ err:", err)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })

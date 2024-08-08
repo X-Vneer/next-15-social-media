@@ -30,10 +30,12 @@ const LikeButton = ({ postId, initialState }: Props) => {
   })
   const { mutate } = useMutation({
     mutationFn: async () => {
-      if (data.isLikedByMe) {
-        return await kyInstance.post(endPointUrl)
+      if (!data.isLikedByMe) {
+        const response = await kyInstance.post(endPointUrl).json()
+        return response
       } else {
-        return await kyInstance.delete(endPointUrl)
+        const response = await kyInstance.delete(endPointUrl).json()
+        return response
       }
     },
     async onMutate() {
@@ -48,6 +50,7 @@ const LikeButton = ({ postId, initialState }: Props) => {
       return { currentState }
     },
     onError: (error, variables, context) => {
+      console.log("🚀 ~ LikeButton ~ error:", error)
       queryClient.setQueryData(queryKey, context?.currentState)
       toast({
         variant: "destructive",
