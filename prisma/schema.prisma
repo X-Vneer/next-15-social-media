@@ -15,20 +15,21 @@ datasource db {
 }
 
 model User {
-  id           String    @id
-  username     String    @unique
+  id           String     @id
+  username     String     @unique
   displayName  String
-  email        String?   @unique // optional cuz google OAuth dose not provide email
+  email        String?    @unique // optional cuz google OAuth dose not provide email
   passwordHash String? // optional: user could singin using google OAuth
-  googleId     String?   @unique // optional: if user uses google OAuth
+  googleId     String?    @unique // optional: if user uses google OAuth
   avatarUrl    String?
   bio          String?
   sessions     Session[]
   posts        Post[]
-  following    Follow[]  @relation("following")
-  followers    Follow[]  @relation("followers")
+  following    Follow[]   @relation("following")
+  followers    Follow[]   @relation("followers")
   likes        Like[]
-  createdAt    DateTime  @default(now())
+  bookmarks    Bookmark[]
+  createdAt    DateTime   @default(now())
 
   @@map("users")
 }
@@ -43,12 +44,13 @@ model Session {
 }
 
 model Post {
-  id          String  @id @default(cuid())
+  id          String     @id @default(cuid())
   content     String
   userId      String
-  user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   attachments Media[]
   likes       Like[]
+  bookmarks   Bookmark[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt()
@@ -91,4 +93,16 @@ model Like {
 
   @@unique([userId, postId])
   @@map("likes")
+}
+
+model Bookmark {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, postId])
+  @@map("bookmarks")
 }
