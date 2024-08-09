@@ -20,8 +20,8 @@ export default function BookmarkButton({ postId, initialState }: BookmarkButtonP
   const { mutate } = useMutation({
     mutationFn: (isBookmarkedByMe: boolean) => {
       return isBookmarkedByMe
-        ? kyInstance.delete(`/api/v1/posts/${postId}/bookmarks`)
-        : kyInstance.post(`/api/v1/posts/${postId}/bookmarks`)
+        ? kyInstance.delete(`/api/v1/posts/${postId}/bookmark`)
+        : kyInstance.post(`/api/v1/posts/${postId}/bookmark`)
     },
     onMutate: async () => {
       toast({

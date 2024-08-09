@@ -1,14 +1,4 @@
-import { Suspense } from "react"
-import Link from "next/link"
-import { notFound } from "next/navigation"
-import { Loader2 } from "lucide-react"
-
 import { validateRequest } from "@/lib/lucia"
-import { UserData } from "@/lib/prisma/types"
-import { Linkify } from "@/components/ui/linkify"
-import UserAvatar from "@/components/ui/user-avatar"
-import UserTooltip from "@/components/ui/user-tooltip"
-import FollowButton from "@/components/follow-button"
 import Post from "@/components/posts/post"
 
 import { getPost } from "./utils"
