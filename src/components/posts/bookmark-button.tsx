@@ -32,11 +32,11 @@ export default function BookmarkButton({ postId, initialState }: BookmarkButtonP
     },
 
     onError(error, variables, context) {
-      toggleBookmark()
       toast({
         variant: "destructive",
         description: "Something went wrong. Please try again.",
       })
+      toggleBookmark()
     },
   })
 

@@ -10,26 +10,21 @@ type Args = {
 
 const useBookmarkInfo = (Args: Args) => {
   const cache = useCache((state) => state)
-  const [isBookmarkedByMe, setIsBookmarkedByMe] = useState(
-    cache.bookmarks[Args.postId]
-      ? cache.bookmarks[Args.postId].isBookmarkedByMe
-      : Args.initialState.isBookmarkedByMe,
-  )
+
+  const bookmarkInfo = cache.bookmarks[Args.postId] ?? Args.initialState
 
   const { removeBookMark, addBookMark } = cache
 
   const toggleBookmark = () => {
-    if (isBookmarkedByMe) {
-      removeBookMark(Args.postId)
-      setIsBookmarkedByMe(false)
+    if (bookmarkInfo.isBookmarkedByMe) {
+      Args.postId
     } else {
       addBookMark(Args.postId)
-      setIsBookmarkedByMe(true)
     }
   }
 
   return {
-    isBookmarkedByMe,
+    isBookmarkedByMe: bookmarkInfo.isBookmarkedByMe,
     toggleBookmark,
   }
 }
