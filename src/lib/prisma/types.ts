@@ -41,6 +41,14 @@ export function getPostDataInclude(userId: string) {
       select: getUserDateSelect(userId),
     },
     attachments: true,
+    bookmarks: {
+      where: {
+        userId: userId,
+      },
+      select: {
+        userId: true,
+      },
+    },
     likes: {
       where: {
         userId: userId,
@@ -76,4 +84,8 @@ export type FollowerInfo = {
 export type LikeInfo = {
   likes: number
   isLikedByMe: boolean
+}
+
+export type BookmarkInfo = {
+  isBookmarkedByMe: boolean
 }

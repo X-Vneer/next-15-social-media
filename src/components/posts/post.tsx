@@ -14,6 +14,7 @@ import FollowButton from "../follow-button"
 import { Linkify } from "../ui/linkify"
 import UserAvatar from "../ui/user-avatar"
 import UserTooltip from "../ui/user-tooltip"
+import BookmarkButton from "./bookmark-button"
 import LikeButton from "./like-button"
 import PostMoreButton from "./post-more-button"
 
@@ -62,13 +63,21 @@ const Post = (props: Props) => {
 
       {!!props.attachments.length && <MediaPreviews attachments={props.attachments} />}
       <hr />
-      <LikeButton
-        initialState={{
-          likes: props._count.likes,
-          isLikedByMe: props.likes.some(({ userId }) => userId === user.id),
-        }}
-        postId={props.id}
-      />
+      <div className="flex justify-between gap-4">
+        <LikeButton
+          initialState={{
+            likes: props._count.likes,
+            isLikedByMe: props.likes.some(({ userId }) => userId === user.id),
+          }}
+          postId={props.id}
+        />
+        <BookmarkButton
+          initialState={{
+            isBookmarkedByMe: props.bookmarks.some(({ userId }) => userId === user.id),
+          }}
+          postId={props.id}
+        />
+      </div>
     </article>
   )
 }
