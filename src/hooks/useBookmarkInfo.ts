@@ -17,7 +17,7 @@ const useBookmarkInfo = (Args: Args) => {
 
   const toggleBookmark = () => {
     if (bookmarkInfo.isBookmarkedByMe) {
-      Args.postId
+      removeBookMark(Args.postId)
     } else {
       addBookMark(Args.postId)
     }
