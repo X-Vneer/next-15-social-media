@@ -1,13 +1,15 @@
 import Link from "next/link"
 import { useSession } from "@/providers/session-provider"
 
-import { commentData } from "@/lib/prisma/types"
+import { CommentData } from "@/lib/prisma/types"
 import { formatRelativeDate } from "@/lib/utils"
 import UserAvatar from "@/components/ui/user-avatar"
 import UserTooltip from "@/components/ui/user-tooltip"
 
+import CommentMoreButton from "./more-button"
+
 interface CommentProps {
-  comment: commentData
+  comment: CommentData
 }
 
 export default function Comment({ comment }: CommentProps) {
@@ -33,12 +35,12 @@ export default function Comment({ comment }: CommentProps) {
         </div>
         <div>{comment.content}</div>
       </div>
-      {/* {comment.user.id === user.id && (
+      {comment.user.id === user.id && (
         <CommentMoreButton
           comment={comment}
           className="ms-auto opacity-0 transition-opacity group-hover/comment:opacity-100"
         />
-      )} */}
+      )}
     </div>
   )
 }

@@ -74,10 +74,10 @@ export function getCommentDataInclude(userId: string) {
   } satisfies Prisma.CommentInclude
 }
 
-export type commentData = Prisma.CommentGetPayload<{ include: ReturnType<typeof getCommentDataInclude> }>
+export type CommentData = Prisma.CommentGetPayload<{ include: ReturnType<typeof getCommentDataInclude> }>
 
 export type CommentPage = {
-  comments: commentData[]
+  comments: CommentData[]
   search: {
     curser?: string
     pageSize: number
