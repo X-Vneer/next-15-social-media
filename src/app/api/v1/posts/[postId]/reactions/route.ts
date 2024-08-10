@@ -57,7 +57,7 @@ export const POST = async (req: NextRequest, { params: { postId } }: { params: {
     })
     if (!post) return NextResponse.json({ error: "Post not found" }, { status: 404 })
 
-    await prisma.$transaction([
+    const operations = await prisma.$transaction([
       prisma.like.upsert({
         where: {
           userId_postId: {
@@ -72,7 +72,7 @@ export const POST = async (req: NextRequest, { params: { postId } }: { params: {
         update: {},
       }),
 
-      ...(user.id === postId
+      ...(user.id !== postId
         ? [
             prisma.notification.create({
               data: {
@@ -85,6 +85,7 @@ export const POST = async (req: NextRequest, { params: { postId } }: { params: {
           ]
         : []),
     ])
+    console.log("🚀 ~ POST ~ operations:", operations)
 
     return NextResponse.json({ success: true })
   } catch (err) {

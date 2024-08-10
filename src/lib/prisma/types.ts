@@ -108,3 +108,28 @@ export type LikeInfo = {
 export type BookmarkInfo = {
   isBookmarkedByMe: boolean
 }
+
+export const notificationInclude = {
+  issuer: {
+    select: {
+      username: true,
+      displayName: true,
+      avatarUrl: true,
+    },
+  },
+  post: {
+    select: {
+      content: true,
+    },
+  },
+} satisfies Prisma.NotificationInclude
+
+export type NotificationData = Prisma.NotificationGetPayload<{ include: typeof notificationInclude }>
+
+export type NotificationPage = {
+  notifications: NotificationData[]
+  search: {
+    curser?: string
+    pageSize: number
+  }
+}
