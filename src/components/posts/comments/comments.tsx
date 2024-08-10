@@ -6,7 +6,9 @@ import { Loader2 } from "lucide-react"
 
 import kyInstance from "@/lib/ky"
 import { CommentPage, PostData } from "@/lib/prisma/types"
+import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
+import { ScrollArea } from "@/components/ui/scroll-area"
 
 import CommentInput from "./comment-input"
 import Comment from "./single-comment"
@@ -49,11 +51,14 @@ const Comments = (post: Props) => {
       {status === "error" && (
         <p className="text-center text-destructive">An error occurred while loading comments.</p>
       )}
-      <div className="divide-y">
-        {comments.map((comment) => (
-          <Comment key={comment.id} comment={comment} />
-        ))}
-      </div>
+
+      <ScrollArea className={cn(comments.length > 5 && "h-[370px]")}>
+        <div className="divide-y">
+          {comments.map((comment) => (
+            <Comment key={comment.id} comment={comment} />
+          ))}
+        </div>
+      </ScrollArea>
     </div>
   )
 }
