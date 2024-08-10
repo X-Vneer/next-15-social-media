@@ -15,22 +15,24 @@ datasource db {
 }
 
 model User {
-  id           String     @id
-  username     String     @unique
-  displayName  String
-  email        String?    @unique // optional cuz google OAuth dose not provide email
-  passwordHash String? // optional: user could singin using google OAuth
-  googleId     String?    @unique // optional: if user uses google OAuth
-  avatarUrl    String?
-  bio          String?
-  sessions     Session[]
-  posts        Post[]
-  following    Follow[]   @relation("following")
-  followers    Follow[]   @relation("followers")
-  likes        Like[]
-  bookmarks    Bookmark[]
-  createdAt    DateTime   @default(now())
-  comments     Comment[]
+  id                    String         @id
+  username              String         @unique
+  displayName           String
+  email                 String?        @unique // optional cuz google OAuth dose not provide email
+  passwordHash          String? // optional: user could singin using google OAuth
+  googleId              String?        @unique // optional: if user uses google OAuth
+  avatarUrl             String?
+  bio                   String?
+  sessions              Session[]
+  posts                 Post[]
+  following             Follow[]       @relation("following")
+  followers             Follow[]       @relation("followers")
+  likes                 Like[]
+  bookmarks             Bookmark[]
+  createdAt             DateTime       @default(now())
+  comments              Comment[]
+  receivedNotifications Notification[] @relation("recipient")
+  issuedNotifications   Notification[] @relation("issuer")
 
   @@map("users")
 }
@@ -45,17 +47,17 @@ model Session {
 }
 
 model Post {
-  id          String     @id @default(cuid())
-  content     String
-  userId      String
-  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  attachments Media[]
-  likes       Like[]
-  bookmarks   Bookmark[]
-  comments    Comment[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt()
+  id                  String         @id @default(cuid())
+  content             String
+  userId              String
+  user                User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  attachments         Media[]
+  likes               Like[]
+  bookmarks           Bookmark[]
+  comments            Comment[]
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt()
+  linkedNotifications Notification[]
 
   @@map("posts")
 }
@@ -121,4 +123,25 @@ model Comment {
   updatedAt DateTime @updatedAt()
 
   @@map("comments")
+}
+
+model Notification {
+  id          String           @id @default(cuid())
+  recipientId String
+  recipient   User             @relation("recipient", fields: [recipientId], references: [id], onDelete: Cascade)
+  issuerId    String
+  issuer      User             @relation("issuer", fields: [issuerId], references: [id], onDelete: Cascade)
+  type        NotificationType
+  postId      String?
+  post        Post?            @relation(fields: [postId], references: [id], onDelete: Cascade)
+  read        Boolean          @default(false)
+  createAt    DateTime         @default(now())
+
+  @@map("notifications")
+}
+
+enum NotificationType {
+  LIKE
+  FOLLOW
+  COMMENT
 }
