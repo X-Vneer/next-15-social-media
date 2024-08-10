@@ -135,7 +135,7 @@ model Notification {
   postId      String?
   post        Post?            @relation(fields: [postId], references: [id], onDelete: Cascade)
   read        Boolean          @default(false)
-  createAt    DateTime         @default(now())
+  createdAt   DateTime         @default(now())
 
   @@map("notifications")
 }
