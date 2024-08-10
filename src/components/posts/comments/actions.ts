@@ -20,7 +20,7 @@ export async function createComment({ content, post }: { content: string; post: 
       error: "Unauthorized",
     }
 
-  const newComment = await prisma.comment.create({
+  const createAction = prisma.comment.create({
     data: {
       content: data.content,
       postId: post.id,
@@ -28,6 +28,20 @@ export async function createComment({ content, post }: { content: string; post: 
     },
     include: getCommentDataInclude(user.id),
   })
+  const notification =
+    user.id === post.userId
+      ? []
+      : [
+          prisma.notification.create({
+            data: {
+              issuerId: user.id,
+              recipientId: post.userId,
+              type: "COMMENT",
+            },
+          }),
+        ]
+
+  const [newComment] = await prisma.$transaction([createAction, ...notification])
 
   return newComment
 }
