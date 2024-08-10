@@ -1,11 +1,12 @@
 "use client"
 
-import React from "react"
+import React, { useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useSession } from "@/providers/session-provider"
 import { Media } from "@prisma/client"
+import { MessageSquare } from "lucide-react"
 
 import { PostData } from "@/lib/prisma/types"
 import { cn, formatRelativeDate } from "@/lib/utils"
@@ -15,6 +16,7 @@ import { Linkify } from "../ui/linkify"
 import UserAvatar from "../ui/user-avatar"
 import UserTooltip from "../ui/user-tooltip"
 import BookmarkButton from "./bookmark-button"
+import Comments from "./comments/comments"
 import LikeButton from "./like-button"
 import PostMoreButton from "./post-more-button"
 
@@ -24,6 +26,9 @@ const Post = (props: Props) => {
   const { user } = useSession()
   const pathName = usePathname()
   const isPostPage = pathName === `/posts/${props.id}`
+
+  const [showComment, setShowComment] = useState(false)
+  const toggleComments = () => setShowComment((pre) => !pre)
   return (
     <article className="space-y-3 rounded-2xl bg-card p-5 shadow-sm">
       <div className="flex justify-between gap-3">
@@ -64,13 +69,17 @@ const Post = (props: Props) => {
       {!!props.attachments.length && <MediaPreviews attachments={props.attachments} />}
       <hr />
       <div className="flex justify-between gap-4">
-        <LikeButton
-          initialState={{
-            likes: props._count.likes,
-            isLikedByMe: props.likes.some(({ userId }) => userId === user.id),
-          }}
-          postId={props.id}
-        />
+        <div className="flex items-center gap-5">
+          <LikeButton
+            initialState={{
+              likes: props._count.likes,
+              isLikedByMe: props.likes.some(({ userId }) => userId === user.id),
+            }}
+            postId={props.id}
+          />
+
+          <CommentsButton post={props} onClick={toggleComments} />
+        </div>
         <BookmarkButton
           initialState={{
             isBookmarkedByMe: props.bookmarks.some(({ userId }) => userId === user.id),
@@ -78,6 +87,7 @@ const Post = (props: Props) => {
           postId={props.id}
         />
       </div>
+      {showComment && <Comments {...props} />}
     </article>
   )
 }
@@ -124,4 +134,20 @@ function MediaPreview({ media }: MediaPreviewProps) {
   }
 
   return <p className="text-destructive">Unsupported media type</p>
+}
+
+type CommentsButtonProps = {
+  post: PostData
+  onClick: () => void
+}
+
+function CommentsButton({ post, onClick }: CommentsButtonProps) {
+  return (
+    <button onClick={onClick} className="flex items-center gap-2">
+      <MessageSquare className="size-5" />
+      <span className="text-sm font-medium tabular-nums">
+        {post._count.comments} <span className="hidden sm:inline"> Comments</span>
+      </span>
+    </button>
+  )
 }

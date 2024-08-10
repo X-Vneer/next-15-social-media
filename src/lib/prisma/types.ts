@@ -60,9 +60,28 @@ export function getPostDataInclude(userId: string) {
     _count: {
       select: {
         likes: true,
+        comments: true,
       },
     },
   } satisfies Prisma.PostInclude
+}
+
+export function getCommentDataInclude(userId: string) {
+  return {
+    user: {
+      select: getUserDateSelect(userId),
+    },
+  } satisfies Prisma.CommentInclude
+}
+
+export type commentData = Prisma.CommentGetPayload<{ include: ReturnType<typeof getCommentDataInclude> }>
+
+export type CommentPage = {
+  comments: commentData[]
+  search: {
+    curser?: string
+    pageSize: number
+  }
 }
 
 export type PostData = Prisma.PostGetPayload<{ include: ReturnType<typeof getPostDataInclude> }>
