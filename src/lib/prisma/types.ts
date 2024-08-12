@@ -133,3 +133,7 @@ export type NotificationPage = {
     pageSize: number
   }
 }
+
+export type NotificationCountInfo = {
+  unreadCount: number
+}

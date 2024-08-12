@@ -1,6 +1,7 @@
 "use client"
 
-import { useInfiniteQuery } from "@tanstack/react-query"
+import { useEffect } from "react"
+import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { Loader2 } from "lucide-react"
 
 import kyInstance from "@/lib/ky"
@@ -20,6 +21,24 @@ export default function Notifications() {
     initialPageParam: null as string | null,
     getNextPageParam: (lastPage) => lastPage.search.curser,
   })
+
+  const queryClient = useQueryClient()
+
+  const { mutate } = useMutation({
+    mutationFn: () => kyInstance.patch("/api/v1/notifications/mark-as-read"),
+    onSuccess: () => {
+      queryClient.setQueryData(["unread-notification-count"], {
+        unreadCount: 0,
+      })
+    },
+    onError(error) {
+      console.error("Failed to mark notifications as read", error)
+    },
+  })
+
+  useEffect(() => {
+    mutate()
+  }, [mutate])
 
   const notifications = data?.pages.flatMap((page) => page.notifications) || []
 
