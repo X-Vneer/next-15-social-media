@@ -10,9 +10,37 @@ export async function GET(req: NextRequest) {
 
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
+    const q = req.nextUrl.searchParams.get("q") || ""
+
+    // this is for prisma text search
+    const searchQuery = q.split(" ").join("&")
+
     const cursor = req.nextUrl.searchParams.get("cursor") || undefined
     const pageSize = 15
     const posts = await prisma.post.findMany({
+      where: {
+        OR: [
+          {
+            content: {
+              search: searchQuery,
+            },
+          },
+          {
+            user: {
+              displayName: {
+                search: searchQuery,
+              },
+            },
+          },
+          {
+            user: {
+              username: {
+                search: searchQuery,
+              },
+            },
+          },
+        ],
+      },
       include: getPostDataInclude(user.id),
       orderBy: {
         createdAt: "desc",

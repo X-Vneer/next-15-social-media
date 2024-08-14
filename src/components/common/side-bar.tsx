@@ -30,12 +30,6 @@ export default async function SideBar({ className }: Props) {
           <span className="hidden lg:inline">Home</span>
         </Link>
       </Button>
-      <Button variant="ghost" className="flex items-center justify-start gap-3" title="Notifications" asChild>
-        <Link href="/notifications">
-          <Bell />
-          <span className="hidden lg:inline">Notifications</span>
-        </Link>
-      </Button>
 
       <NotificationsButton initialState={{ unreadCount: unreadNotificationCount }} />
       {/* <Button variant="ghost" className="flex items-center justify-start gap-3" title="Messages" asChild>
