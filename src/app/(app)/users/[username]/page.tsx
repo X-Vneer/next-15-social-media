@@ -21,19 +21,21 @@ import { getUser } from "./utils"
 // import FollowButton from "@/components/follow-button"
 
 export async function generateMetadata({
-  params: { username },
+  params,
 }: {
-  params: { username: string }
+  params: Promise<{ username: string }>
 }): Promise<Metadata> {
+  const { username } = await params
   const user = await getUser(username)
   return {
     title: `${user.displayName} @${user.username}`,
   }
 }
-export default async function Page({ params }: { params: { username: string } }) {
+export default async function Page({ params }: { params: Promise<{ username: string }> }) {
   const session = await validateRequest()
   if (!session.user) return <p className="my-10 text-center text-destructive">Not logged in!</p>
-  const user = await getUser(params.username)
+  const { username } = await params
+  const user = await getUser(username)
 
   return (
     <>
