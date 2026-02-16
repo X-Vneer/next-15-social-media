@@ -3,16 +3,18 @@ import { Metadata } from "next"
 import SearchResults from "./search-results"
 
 interface PageProps {
-  searchParams: { q: string }
+  searchParams: Promise<{ q: string }>
 }
 
-export function generateMetadata({ searchParams: { q } }: PageProps): Metadata {
+export async function generateMetadata({ searchParams }: PageProps): Promise<Metadata> {
+  const { q } = await searchParams
   return {
     title: `Search results for "${q}"`,
   }
 }
 
-export default function Page({ searchParams: { q } }: PageProps) {
+export default async function Page({ searchParams }: PageProps) {
+  const { q } = await searchParams
   return (
     <>
       <div className="rounded-2xl bg-card p-5 shadow-sm">

@@ -1,18 +1,13 @@
-import { cache } from "react"
 import { Metadata } from "next"
-import { notFound } from "next/navigation"
 import { formatDate } from "date-fns"
 
-// import { User } from "lucia"
-
 import { validateRequest } from "@/lib/lucia"
-import prisma from "@/lib/prisma"
-import { FollowerInfo, getUserDateSelect, UserData } from "@/lib/prisma/types"
+import { FollowerInfo, UserData } from "@/lib/prisma/types"
 import { formatNumber } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
 import { Linkify } from "@/components/ui/linkify"
 import UserAvatar from "@/components/ui/user-avatar"
-import TrendSidebar from "@/components/common/trends-sidebar"
+// import { User } from "lucia"
+
 import FollowButton from "@/components/follow-button"
 import FollowerCount from "@/components/followers-count"
 import UserPosts from "@/components/posts/user-posts"
