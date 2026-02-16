@@ -36,7 +36,8 @@ export async function POST(request: NextRequest) {
 
     const session = await lucia.createSession(user.id, {})
     const sessionCookie = lucia.createSessionCookie(session.id)
-    cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes)
+    const cookiesStore = await cookies()  
+    cookiesStore.set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes)
 
     delete (user as any).passwordHash
     return NextResponse.json(user, { status: 200 })

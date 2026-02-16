@@ -11,7 +11,8 @@ export const POST = async () => {
     await lucia.invalidateSession(session.id)
 
     const sessionCookie = lucia.createBlankSessionCookie()
-    cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes)
+    const cookiesStore = await cookies()
+    cookiesStore.set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes)
 
     return new Response("ok")
   } catch (error: any) {

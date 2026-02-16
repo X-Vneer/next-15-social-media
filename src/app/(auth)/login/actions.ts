@@ -1,6 +1,6 @@
 "use server"
 
-import { isRedirectError } from "next/dist/client/components/redirect"
+import { isRedirectError } from "next/dist/client/components/redirect-error"
 import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
 import { signInSchema, SignInValues } from "@/validation/auth"
@@ -48,7 +48,8 @@ export async function login(credentials: SignInValues): Promise<{ error: string 
 
     const session = await lucia.createSession(user.id, {})
     const sessionCookie = lucia.createSessionCookie(session.id)
-    cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes)
+    const cookiesStore = await cookies()
+    cookiesStore.set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes)
 
     return redirect("/")
   } catch (error) {
