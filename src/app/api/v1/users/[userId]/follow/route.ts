@@ -3,7 +3,8 @@ import { NextRequest, NextResponse } from "next/server"
 import { validateRequest } from "@/lib/lucia"
 import prisma from "@/lib/prisma"
 
-export async function POST(req: NextRequest, { params: { userId } }: { params: { userId: string } }) {
+export async function POST(req: NextRequest, { params }: { params: Promise<{ userId: string }> }) {
+  const { userId } = await params
   try {
     const { user } = await validateRequest()
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })

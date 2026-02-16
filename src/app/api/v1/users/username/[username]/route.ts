@@ -4,7 +4,8 @@ import { validateRequest } from "@/lib/lucia"
 import prisma from "@/lib/prisma"
 import { getUserDateSelect } from "@/lib/prisma/types"
 
-export const GET = async (req: NextRequest, { params: { username } }: { params: { username: string } }) => {
+export const GET = async (req: NextRequest, { params }: { params: Promise<{ username: string }> }) => {
+  const { username } = await params
   try {
     const session = await validateRequest()
     if (!session.user) return NextResponse.json("Unauthorized", { status: 401 })

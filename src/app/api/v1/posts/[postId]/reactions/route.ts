@@ -4,7 +4,9 @@ import { validateRequest } from "@/lib/lucia"
 import prisma from "@/lib/prisma"
 import { LikeInfo } from "@/lib/prisma/types"
 
-export const GET = async (req: NextRequest, { params: { postId } }: { params: { postId: string } }) => {
+export const GET = async (req: NextRequest, { params }: { params: Promise<{ postId: string }> }) => {
+  const { postId } = await params
+
   try {
     const { user } = await validateRequest()
     if (!user) return NextResponse.json({ error: "unauthorized" }, { status: 401 })
@@ -43,7 +45,9 @@ export const GET = async (req: NextRequest, { params: { postId } }: { params: { 
   }
 }
 
-export const POST = async (req: NextRequest, { params: { postId } }: { params: { postId: string } }) => {
+export const POST = async (req: NextRequest, { params }: { params: Promise<{ postId: string }> }) => {
+  const { postId } = await params
+
   try {
     const { user } = await validateRequest()
     if (!user) return NextResponse.json({ error: "unauthorized" }, { status: 401 })
@@ -93,7 +97,8 @@ export const POST = async (req: NextRequest, { params: { postId } }: { params: {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }
-export const DELETE = async (req: NextRequest, { params: { postId } }: { params: { postId: string } }) => {
+export const DELETE = async (req: NextRequest, { params }: { params: Promise<{ postId: string }> }) => {
+  const { postId } = await params
   try {
     const { user } = await validateRequest()
     if (!user) return NextResponse.json({ error: "unauthorized" }, { status: 401 })

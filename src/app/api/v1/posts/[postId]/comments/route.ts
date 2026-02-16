@@ -4,7 +4,9 @@ import { validateRequest } from "@/lib/lucia"
 import prisma from "@/lib/prisma"
 import { getCommentDataInclude } from "@/lib/prisma/types"
 
-export const GET = async (req: NextRequest, { params: { postId } }: { params: { postId: string } }) => {
+export const GET = async (req: NextRequest, { params }: { params: Promise<{ postId: string }> }) => {
+  const { postId } = await params
+
   try {
     const { user } = await validateRequest()
     if (!user) return NextResponse.json({ error: "unauthorized" }, { status: 401 })

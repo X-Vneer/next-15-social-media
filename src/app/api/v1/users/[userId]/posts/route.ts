@@ -4,7 +4,8 @@ import { validateRequest } from "@/lib/lucia"
 import prisma from "@/lib/prisma"
 import { getPostDataInclude, PostsPage } from "@/lib/prisma/types"
 
-export async function GET(req: NextRequest, { params: { userId } }: { params: { userId: string } }) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ userId: string }> }) {
+  const { userId } = await params
   try {
     const cursor = req.nextUrl.searchParams.get("cursor") || undefined
 
